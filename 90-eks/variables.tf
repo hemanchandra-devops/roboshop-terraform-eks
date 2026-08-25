@@ -6,10 +6,17 @@ variable "environment" {
   default = "dev"
 }
 
-variable "zone_id" {
-  default = "Z09005143JOTSHTMIUST8"
+variable "eks_version" {
 }
 
-variable "domain_name" {
-  default = "heman.icu"
+variable "enable_blue" {
+}
+
+variable "eks_nodegroup_blue_version" {
+}
+
+variable "enable_green" {
+}
+
+variable "eks_nodegroup_green_version" {
 }

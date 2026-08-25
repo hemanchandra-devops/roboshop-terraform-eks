@@ -3,7 +3,7 @@ module "eks" {
   version = "~> 21.0"
 
   name               = local.common_name
-  kubernetes_version = "1.32"
+  kubernetes_version = var.eks_version
 
   addons = {
     coredns                = {}
@@ -34,7 +34,8 @@ module "eks" {
 
   eks_managed_node_groups = {
     blue = {
-      
+      create = var.enable_blue
+      kubernetes_version = var.eks_nodegroup_blue_version
       ami_type       = "AL2023_x86_64_STANDARD"
       instance_types = ["m5.xlarge"]
       iam_role_additional_policies  = {
@@ -45,6 +46,30 @@ module "eks" {
       min_size     = 2
       max_size     = 10
       desired_size = 2
+    }
+
+    green = {
+      create = var.enable_green
+      kubernetes_version = var.eks_nodegroup_green_version
+      ami_type       = "AL2023_x86_64_STANDARD"
+      instance_types = ["m5.xlarge"]
+      iam_role_additional_policies  = {
+        amazonEFS = "arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy"
+        amazonEBS = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+      }
+
+      min_size     = 2
+      max_size     = 10
+      desired_size = 2
+
+      taints = {
+        upgrade = {
+          key    = "upgrade"
+          value  = "green"
+          effect = "NO_SCHEDULE"
+        }
+      }
+
     }
   }
 
