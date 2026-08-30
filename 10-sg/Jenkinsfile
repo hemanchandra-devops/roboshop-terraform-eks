@@ -48,6 +48,53 @@ pipeline {
                 }                
             }
         }
+        stage('Parallel Triggers') {
+            parallel {
+                stage('Trigger Bastion') {
+                    steps {
+                        build job: '20-bastion',
+                            wait: false,
+                            propagate: false
+                    }
+                }
+                stage('Trigger SG Rules') {
+                    steps {
+                        build job: '30-sg-rules',
+                            wait: false,
+                            propagate: false
+                    }
+                }
+                stage('Trigger ECR') {
+                    steps {
+                        build job: '40-ecr',
+                            wait: false,
+                            propagate: false
+                    }
+                }
+                stage('Trigger ACM') {
+                    steps {
+                        build job: '70-acm',
+                            wait: true,
+                            propagate: true
+                    }
+                }
+                stage('Trigger EKS') {
+                    steps {
+                        build job: '90-eks',
+                            wait: false,
+                            propagate: false
+                    }
+                }
+            }
+        }
+        stage('Trigger Frontend ALB') {
+            steps {
+                build job: '80-frontend-alb',
+                    wait: false,
+                    propagate: false
+            }
+        }
+    
 
 
     }
